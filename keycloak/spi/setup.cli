@@ -1,0 +1,17 @@
+echo using ${env.JBOSS_HOME}/standalone/configuration/standalone-ha.xml
+
+embed-server --server-config=standalone-ha.xml --std-out=echo
+
+echo Begin Keycloak event emitter configuration...
+
+/subsystem=keycloak-server/spi=eventsListener:add()
+/subsystem=keycloak-server/spi=eventsListener/provider=rabbitmq-event-listener:add(enabled=true)
+/subsystem=keycloak-server/spi=eventsListener/provider=rabbitmq-event-listener:write-attribute(name=properties.username,value="${env.RABBITMQ_EVENT_LISTENER_USERNAME:guest}")
+/subsystem=keycloak-server/spi=eventsListener/provider=rabbitmq-event-listener:write-attribute(name=properties.password,value="${env.RABBITMQ_EVENT_LISTENER_PASSWORD:guest}")
+/subsystem=keycloak-server/spi=eventsListener/provider=rabbitmq-event-listener:write-attribute(name=properties.virtual_host,value="${env.RABBITMQ_EVENT_LISTENER_VIRTUAL_HOST:/}")
+/subsystem=keycloak-server/spi=eventsListener/provider=rabbitmq-event-listener:write-attribute(name=properties.host,value="${env.RABBITMQ_EVENT_LISTENER_HOST:localhost}")
+/subsystem=keycloak-server/spi=eventsListener/provider=rabbitmq-event-listener:write-attribute(name=properties.port,value="${env.RABBITMQ_EVENT_LISTENER_PORT:5672}")
+/subsystem=keycloak-server/spi=eventsListener/provider=rabbitmq-event-listener:write-attribute(name=properties.target_queue,value="${env.RABBITMQ_EVENT_LISTENER_TARGET_QUEUE:keycloak-events}")
+/subsystem=keycloak-server/spi=eventsListener/provider=rabbitmq-event-listener:write-attribute(name=properties.publish_admin_events,value="${env.RABBITMQ_EVENT_LISTENER_PUBLISH_ADMIN_EVENTS:true}")
+/subsystem=keycloak-server/spi=eventsListener/provider=rabbitmq-event-listener:write-attribute(name=properties.publish_all_events,value="${env.RABBITMQ_EVENT_LISTENER_PUBLISH_ALL_EVENTS:true}")
+echo Keycloak event emitter completed
