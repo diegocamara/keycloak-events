@@ -30,16 +30,18 @@ public class RabbitMQEventListenerProvider implements EventListenerProvider {
 
   @Override
   public void onEvent(Event event) {
-    if (rabbitMQEventListenerConfiguration.isPublishAllEvents()) {
-      publishEventMessage(writeValueAsString(event));
+    if (isValidRealmId(event.getRealmId())
+        && rabbitMQEventListenerConfiguration.isPublishAllEvents()) {
+      publishEventMessage(writeValueAsBytes(event));
       logger.info("Event of type " + event.getType() + " published with success.");
     }
   }
 
   @Override
   public void onEvent(AdminEvent event, boolean includeRepresentation) {
-    if (rabbitMQEventListenerConfiguration.isPublishAdminEvents()) {
-      publishEventMessage(writeValueAsString(event));
+    if (isValidRealmId(event.getRealmId())
+        && rabbitMQEventListenerConfiguration.isPublishAdminEvents()) {
+      publishEventMessage(writeValueAsBytes(event));
       logger.info("Admin event published with success.");
     }
   }
@@ -47,7 +49,11 @@ public class RabbitMQEventListenerProvider implements EventListenerProvider {
   @Override
   public void close() {}
 
-  private void publishEventMessage(String event) {
+  private boolean isValidRealmId(String realmId) {
+    return rabbitMQEventListenerConfiguration.getRealmId().trim().equalsIgnoreCase(realmId);
+  }
+
+  private void publishEventMessage(byte[] event) {
     try {
       try (final var connection = connectionFactory.newConnection()) {
 
@@ -55,7 +61,7 @@ public class RabbitMQEventListenerProvider implements EventListenerProvider {
 
           final String targetQueue = rabbitMQEventListenerConfiguration.getTargetQueue();
 
-          channel.queueDeclare(targetQueue, false, false, false, null);
+          channel.queueDeclare(targetQueue, true, false, false, null);
 
           channel.basicPublish(
               "",
@@ -66,7 +72,7 @@ public class RabbitMQEventListenerProvider implements EventListenerProvider {
                   .contentEncoding("UTF-8")
                   .deliveryMode(2)
                   .build(),
-              event.getBytes());
+              event);
         }
       }
 
@@ -75,9 +81,9 @@ public class RabbitMQEventListenerProvider implements EventListenerProvider {
     }
   }
 
-  private String writeValueAsString(Object value) {
+  private byte[] writeValueAsBytes(Object value) {
     try {
-      return objectMapper.writeValueAsString(value);
+      return objectMapper.writeValueAsBytes(value);
     } catch (JsonProcessingException e) {
       throw new RuntimeException(e);
     }

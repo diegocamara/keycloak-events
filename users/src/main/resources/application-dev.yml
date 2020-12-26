@@ -1,0 +1,13 @@
+spring:
+  data:
+    mongodb:
+      username: ${MONGODB_USERNAME:''}
+      password: ${MONGODB_PASSWORD:''}
+      host: ${MONGODB_HOST:localhost}
+      port: ${MONGODB_PORT:27017}
+      database: ${MONGODB_USERS_DATABASE:users}
+  rabbitmq:
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}

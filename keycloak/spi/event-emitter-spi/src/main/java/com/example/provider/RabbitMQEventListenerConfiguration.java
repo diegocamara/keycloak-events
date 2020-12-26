@@ -12,6 +12,7 @@ public class RabbitMQEventListenerConfiguration {
   public static final String TARGET_QUEUE = "target_queue";
   public static final String PUBLISH_ADMIN_EVENTS = "publish_admin_events";
   public static final String PUBLISH_ALL_EVENTS = "publish_all_events";
+  public static final String REALM_ID = "realm_id";
 
   private final String username;
   private final String password;
@@ -21,6 +22,7 @@ public class RabbitMQEventListenerConfiguration {
   private final String targetQueue;
   private final boolean publishAdminEvents;
   private final boolean publishAllEvents;
+  private final String realmId;
 
   public RabbitMQEventListenerConfiguration(Config.Scope config) {
     this.username = config.get(USERNAME);
@@ -31,6 +33,7 @@ public class RabbitMQEventListenerConfiguration {
     this.targetQueue = config.get(TARGET_QUEUE);
     this.publishAdminEvents = config.getBoolean(PUBLISH_ADMIN_EVENTS);
     this.publishAllEvents = config.getBoolean(PUBLISH_ALL_EVENTS);
+    this.realmId = config.get(REALM_ID);
   }
 
   public String getUsername() {
@@ -63,5 +66,9 @@ public class RabbitMQEventListenerConfiguration {
 
   public boolean isPublishAllEvents() {
     return publishAllEvents;
+  }
+
+  public String getRealmId() {
+    return realmId;
   }
 }
