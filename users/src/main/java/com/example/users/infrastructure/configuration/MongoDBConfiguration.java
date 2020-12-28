@@ -1,23 +1,40 @@
 package com.example.users.infrastructure.configuration;
 
 import com.mongodb.MongoClientSettings;
+import com.mongodb.ServerAddress;
+import com.mongodb.reactivestreams.client.MongoClient;
+import com.mongodb.reactivestreams.client.MongoClients;
+import lombok.AllArgsConstructor;
 import org.bson.UuidRepresentation;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.mongo.MongoProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.SpringDataMongoDB;
 import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguration;
 
-// @Configuration
+import static java.util.Collections.singletonList;
+
+@Configuration
+@AllArgsConstructor
 public class MongoDBConfiguration extends AbstractReactiveMongoConfiguration {
 
-  @Value("${spring.data.mongodb.database}")
-  private String databaseName;
+  private final MongoProperties mongoProperties;
 
   @Override
-  protected void configureClientSettings(MongoClientSettings.Builder builder) {
-    builder.uuidRepresentation(UuidRepresentation.STANDARD);
+  public MongoClient reactiveMongoClient() {
+    final var settings =
+        MongoClientSettings.builder()
+            .applyToClusterSettings(builder -> builder.hosts(singletonList(serverAddress())))
+            .uuidRepresentation(UuidRepresentation.STANDARD)
+            .build();
+    return MongoClients.create(settings, SpringDataMongoDB.driverInformation());
+  }
+
+  private ServerAddress serverAddress() {
+    return new ServerAddress(mongoProperties.getHost(), mongoProperties.getPort());
   }
 
   @Override
   protected String getDatabaseName() {
-    return this.databaseName;
+    return this.mongoProperties.getDatabase();
   }
 }
