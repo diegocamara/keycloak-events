@@ -10,5 +10,8 @@ spring:
     host: ${RABBITMQ_HOST:localhost}
     port: ${RABBITMQ_PORT:5672}
 
+queue:
+  users-events: ${RABBITMQ_USERS_EVENTS:users-events}
+
 collections:
   users: users

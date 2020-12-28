@@ -2,29 +2,32 @@ package com.example.users.infrastructure.configuration;
 
 import com.example.users.application.messaging.rabbitmq.model.UserEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import reactor.core.publisher.Flux;
 
 @Slf4j
 @Configuration
-@AllArgsConstructor
 public class RabbitMQConfiguration {
 
-  private final ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
-  @Bean("usersConsumer")
-  public Flux<UserEvent> usersConsumer(ConnectionFactory connectionFactory) {
+  @Value("${queue.users-events}")
+  private String usersEventsQueue;
+
+  @Bean("usersFlux")
+  public Flux<UserEvent> usersFlux(ConnectionFactory connectionFactory) {
 
     final var messageListenerContainer = new SimpleMessageListenerContainer(connectionFactory);
     messageListenerContainer.setAcknowledgeMode(AcknowledgeMode.AUTO);
-    messageListenerContainer.addQueueNames("users-events");
+    messageListenerContainer.addQueueNames(usersEventsQueue);
 
     return Flux.create(
         emitter -> {

@@ -15,17 +15,17 @@ import javax.annotation.PostConstruct;
 @Component
 public class UsersSubscriber {
 
-  private final Flux<UserEvent> usersConsumer;
+  private final Flux<UserEvent> usersFlux;
   private final CreateUser createUser;
   private final UpdateUser updateUser;
   private final DeleteUser deleteUser;
 
   public UsersSubscriber(
-      @Qualifier("usersConsumer") Flux<UserEvent> usersConsumer,
+      @Qualifier("usersFlux") Flux<UserEvent> usersFlux,
       CreateUser createUser,
       UpdateUser updateUser,
       DeleteUser deleteUser) {
-    this.usersConsumer = usersConsumer;
+    this.usersFlux = usersFlux;
     this.createUser = createUser;
     this.updateUser = updateUser;
     this.deleteUser = deleteUser;
@@ -33,9 +33,8 @@ public class UsersSubscriber {
 
   @PostConstruct
   public void postConstruct() {
-    usersConsumer.subscribe(
+    usersFlux.subscribe(
         userEvent -> {
-          log.info(userEvent.toString());
           switch (userEvent.getOperation()) {
             case CREATE:
               createUser
