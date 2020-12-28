@@ -1,5 +1,5 @@
 ### Example of synchronizing users with keycloak.
-#### Abstract system diagram:
+#### How it works:
 ![](poc-diagram.png)
 
 ## Running the application:
