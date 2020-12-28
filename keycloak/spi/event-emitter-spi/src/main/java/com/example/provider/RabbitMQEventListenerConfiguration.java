@@ -10,8 +10,8 @@ public class RabbitMQEventListenerConfiguration {
   public static final String HOST = "host";
   public static final String PORT = "port";
   public static final String TARGET_QUEUE = "target_queue";
-  public static final String PUBLISH_ADMIN_EVENTS = "publish_admin_events";
-  public static final String PUBLISH_ALL_EVENTS = "publish_all_events";
+  public static final String PUBLISH_ADMIN_USERS_EVENTS = "publish_admin_users_events";
+
   public static final String REALM_ID = "realm_id";
 
   private final String username;
@@ -20,8 +20,7 @@ public class RabbitMQEventListenerConfiguration {
   private final String host;
   private final Integer port;
   private final String targetQueue;
-  private final boolean publishAdminEvents;
-  private final boolean publishAllEvents;
+  private final boolean publishAdminUsersEvents;
   private final String realmId;
 
   public RabbitMQEventListenerConfiguration(Config.Scope config) {
@@ -31,8 +30,7 @@ public class RabbitMQEventListenerConfiguration {
     this.host = config.get(HOST);
     this.port = config.getInt(PORT);
     this.targetQueue = config.get(TARGET_QUEUE);
-    this.publishAdminEvents = config.getBoolean(PUBLISH_ADMIN_EVENTS);
-    this.publishAllEvents = config.getBoolean(PUBLISH_ALL_EVENTS);
+    this.publishAdminUsersEvents = config.getBoolean(PUBLISH_ADMIN_USERS_EVENTS);
     this.realmId = config.get(REALM_ID);
   }
 
@@ -60,12 +58,8 @@ public class RabbitMQEventListenerConfiguration {
     return targetQueue;
   }
 
-  public boolean isPublishAdminEvents() {
-    return publishAdminEvents;
-  }
-
-  public boolean isPublishAllEvents() {
-    return publishAllEvents;
+  public boolean isPublishAdminUsersEvents() {
+    return publishAdminUsersEvents;
   }
 
   public String getRealmId() {

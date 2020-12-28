@@ -1,13 +1,14 @@
 spring:
   data:
     mongodb:
-      username: ${MONGODB_USERNAME:''}
-      password: ${MONGODB_PASSWORD:''}
-      host: ${MONGODB_HOST:localhost}
-      port: ${MONGODB_PORT:27017}
       database: ${MONGODB_USERS_DATABASE:users}
+      uri: mongodb://${MONGODB_HOST:localhost}:${MONGODB_PORT:27017}/${spring.data.mongodb.database}
+
   rabbitmq:
     username: ${RABBITMQ_USERNAME:guest}
     password: ${RABBITMQ_PASSWORD:guest}
     host: ${RABBITMQ_HOST:localhost}
     port: ${RABBITMQ_PORT:5672}
+
+collections:
+  users: users
